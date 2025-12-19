@@ -8,78 +8,58 @@
     --text: #f8fafc;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
 
-/* Dashboard Layout */
-.wrapper { max-width: 1400px; margin: auto; }
-header { text-align: center; margin-bottom: 20px; }
-header h1 { font-family: 'Orbitron'; color: var(--brand); font-size: 2rem; margin: 0; }
+.wrapper { max-width: 1300px; margin: auto; }
+header h1 { font-family: 'Orbitron'; color: var(--brand); text-align: center; letter-spacing: 2px; }
 
-.main-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+.main-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; }
+.card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+h2 { font-size: 0.85rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 15px; border-left: 4px solid var(--brand); padding-left: 10px; }
 
-.card { 
-    background: var(--card); 
-    padding: 20px; 
-    border-radius: 12px; 
-    border: 1px solid var(--border);
-    height: fit-content;
-}
-
-h2 { font-size: 0.9rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 15px; border-left: 4px solid var(--brand); padding-left: 10px; }
-
-/* Input Alignment */
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .input-group { display: flex; flex-direction: column; }
-label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px; }
-input, select, textarea { 
-    background: #0f172a; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; font-size: 14px;
-}
+label { font-size: 0.7rem; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
+input, select, textarea { background: #0f172a; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; font-size: 13px; }
 
-/* Product Table Alignment */
-.table-container { overflow-x: auto; }
+/* Product Table */
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: 0.75rem; color: #64748b; padding: 10px; border-bottom: 1px solid var(--border); }
-td { padding: 8px 5px; }
-.col-desc { width: 45%; }
-.col-qty, .col-rate, .col-total { width: 18%; }
-table input { width: 100%; }
+th { text-align: left; font-size: 0.7rem; color: #64748b; padding: 10px; border-bottom: 1px solid var(--border); }
+.p-total-cell { text-align: right; color: var(--brand); font-weight: bold; }
 
-.btn { padding: 10px 20px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
-.btn-brand { background: var(--brand); color: white; width: 100%; margin-top: 20px; font-size: 1rem; }
-.btn-add { background: #334155; color: white; margin-top: 10px; font-size: 0.8rem; }
+.btn { padding: 12px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.btn-brand { background: var(--brand); color: white; width: 100%; margin-top: 15px; font-size: 1rem; }
+.btn-add { background: #334155; color: white; font-size: 0.75rem; margin-top: 10px; }
 
-/* Live Total Bar */
-.summary-bar { 
-    margin-top: 20px; background: #000; padding: 15px; border-radius: 8px; 
-    display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--brand);
+.summary-bar { background: #000; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--brand); margin-top: 15px; }
+
+/* --- A4 INVOICE SHEET (Pixel Perfect) --- */
+#invoice-sheet {
+    width: 210mm; min-height: 297mm; background: white; color: black; padding: 15mm;
+    margin: 40px auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); display: none; overflow: hidden;
 }
 
-/* INVOICE SHEET ALIGNMENT (The "Perfect Sheet") */
-#invoice-template {
-    width: 210mm; height: 297mm; /* Standard A4 */
-    background: white; color: black; margin: 40px auto; padding: 20mm;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); display: none;
-    position: relative;
-}
+.inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+.comp-logo { width: 90px; height: 90px; object-fit: contain; }
+.comp-details { text-align: center; flex: 1; }
+.comp-details h1 { font-family: 'Orbitron'; margin: 0; font-size: 26px; color: #000; }
+.comp-details p { font-size: 11px; margin: 3px 0; color: #444; }
 
-.inv-top-bar { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: start; margin-bottom: 30px; }
-.logo-box { width: 80px; }
-.logo-box img { max-width: 100%; }
-.company-center { text-align: center; }
-.inv-meta-right { text-align: right; }
+.inv-top-info { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #000; border-bottom: 1px solid #eee; padding: 15px 0; margin-bottom: 20px; }
+.inv-top-info h3 { margin: 0 0 5px 0; font-size: 14px; text-decoration: underline; }
+.inv-top-info p { font-size: 12px; margin: 2px 0; }
 
-.inv-info-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 30px; border-top: 1px solid #eee; padding-top: 20px; }
-.inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-.inv-table th { background: #f8fafc; color: black; border: 1px solid #ddd; padding: 10px; text-align: center; }
-.inv-table td { border: 1px solid #ddd; padding: 10px; }
+.inv-table { width: 100%; border: 1px solid #000; margin-bottom: 20px; }
+.inv-table th { background: #f1f5f9; color: black; border: 1px solid #000; padding: 8px; text-align: center; font-size: 12px; }
+.inv-table td { border: 1px solid #000; padding: 8px; font-size: 12px; vertical-align: top; }
 
-.inv-bottom-section { display: flex; justify-content: space-between; align-items: flex-end; }
-.inv-total-calc { width: 250px; }
-.total-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+.inv-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+.total-box { width: 280px; }
+.total-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+.grand-total-row { display: flex; justify-content: space-between; padding: 10px 0; font-weight: 800; font-size: 18px; border-top: 2px solid #000; }
 
-.signature-box { text-align: center; width: 200px; }
-.sig-space { border-bottom: 1px solid black; height: 60px; margin-bottom: 5px; }
+.signature-container { margin-top: 60px; text-align: right; }
+.signature-line { border-top: 1px solid #000; width: 220px; display: inline-block; padding-top: 5px; font-weight: bold; font-size: 12px; text-align: center; }
 
-/* Responsive Dashboard for small screens */
-@media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+#search-results { margin-top: 10px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 4px; }
