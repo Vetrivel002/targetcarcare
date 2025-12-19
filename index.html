@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Target Car Care | Professional billing</title>
+    <title>Target Car Care | Billing System</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,163 +13,130 @@
     <header><h1>TARGET CAR CARE</h1></header>
 
     <div class="main-grid">
-        <div class="dash-left">
+        <div class="left-panel">
             <section class="card">
-                <h2>1. Customer Details</h2>
+                <h2>Customer & Vehicle</h2>
                 <div class="form-row">
-                    <div class="input-group"><label>Customer Name</label><input type="text" id="custName" placeholder="Full Name"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="text" id="custMobile" placeholder="9876543210"></div>
+                    <div class="input-group"><label>Customer Name</label><input type="text" id="custName"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="text" id="custMobile"></div>
                 </div>
                 <div class="form-row">
-                    <div class="input-group"><label>Vehicle Name/Model</label><input type="text" id="vName" placeholder="Ex: Swift VXI"></div>
-                    <div class="input-group"><label>Vehicle Number</label><input type="text" id="vNo" placeholder="TN 30 AB 1234"></div>
+                    <div class="input-group"><label>Vehicle Name</label><input type="text" id="vName"></div>
+                    <div class="input-group"><label>Vehicle Number</label><input type="text" id="vNo"></div>
                 </div>
                 <div class="form-row">
-                    <div class="input-group"><label>Customer GST (Opt)</label><input type="text" id="custGST"></div>
-                    <div class="input-group"><label>Email Address</label><input type="email" id="custEmail"></div>
+                    <div class="input-group"><label>GST/PAN</label><input type="text" id="custGST"></div>
+                    <div class="input-group"><label>Email</label><input type="email" id="custEmail"></div>
                 </div>
-                <div class="input-group"><label>Customer Address</label><textarea id="custAddr" rows="2"></textarea></div>
+                <div class="input-group"><label>Address</label><input type="text" id="custAddr"></div>
             </section>
 
-            <section class="card" style="margin-top:20px;">
-                <h2>2. Company Info</h2>
+            <section class="card">
+                <h2>Company Details</h2>
                 <div class="form-row">
-                    <div class="input-group"><label>Company Name</label><input type="text" id="compName" value="TARGET Multi-brand Car Service"></div>
-                    <div class="input-group"><label>Mobile</label><input type="text" id="compMobile" value="8438143591"></div>
+                    <input type="text" id="compName" value="TARGET Multi-brand Car Service">
+                    <input type="text" id="compMobile" value="8438143591">
                 </div>
-                <div class="input-group"><label>Address</label><input type="text" id="compAddr" value="SRIRAM NAGAR, Veeranam Main Rd, Salem - 636003"></div>
+                <textarea id="compAddr" rows="2">SRIRAM NAGAR, Veeranam Main Rd, near NEW INDIA DISCOVARY SCHOOL, Salem - 636003</textarea>
+            </section>
+
+            <section class="card">
+                <h2>Search Invoice</h2>
+                <div class="form-row">
+                    <input type="text" id="searchQuery" placeholder="Inv No or Mobile">
+                    <button class="btn btn-add" style="margin:0" onclick="searchInvoice()">Search</button>
+                </div>
+                <div id="search-results"></div>
             </section>
         </div>
 
-        <div class="dash-right">
+        <div class="right-panel">
             <section class="card">
-                <h2>3. Services & Products</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="col-desc">Description</th>
-                                <th class="col-rate">Rate</th>
-                                <th class="col-qty">Qty</th>
-                                <th class="col-total">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productBody">
-                            <tr>
-                                <td><input type="text" class="p-name" placeholder="Service Name"></td>
-                                <td><input type="number" class="p-rate" value="0" oninput="calculateFinal()"></td>
-                                <td><input type="number" class="p-qty" value="1" oninput="calculateFinal()"></td>
-                                <td class="p-total" style="text-align:right; color:#38bdf8; font-weight:bold;">0.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button class="btn btn-add" onclick="addRow()">+ Add New Item</button>
+                <h2>Services & Charges</h2>
+                <table id="productTable">
+                    <thead>
+                        <tr><th width="50%">Description</th><th>Rate</th><th width="15%">Qty</th><th style="text-align:right">Total</th></tr>
+                    </thead>
+                    <tbody id="productBody">
+                        <tr>
+                            <td><input type="text" class="p-name" placeholder="E.g. Full Oil Service"></td>
+                            <td><input type="number" class="p-rate" value="0" oninput="calculateFinal()"></td>
+                            <td><input type="number" class="p-qty" value="1" oninput="calculateFinal()"></td>
+                            <td class="p-total-cell">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-add" onclick="addRow()">+ Add New Service</button>
 
                 <div class="form-row" style="margin-top:20px;">
                     <div class="input-group"><label>Tax (%)</label><input type="number" id="taxPerc" value="0" oninput="calculateFinal()"></div>
-                    <div class="input-group"><label>Discount (%)</label><input type="number" id="discPerc" value="0" oninput="calculateFinal()"></div>
+                    <div class="input-group"><label>Disc (%)</label><input type="number" id="discPerc" value="0" oninput="calculateFinal()"></div>
+                    <div class="input-group"><label>Disc (Fixed ₹)</label><input type="number" id="discFixed" value="0" oninput="calculateFinal()"></div>
                 </div>
 
                 <div class="summary-bar">
-                    <span>Grand Total:</span>
-                    <h2 id="liveGrandTotal" style="margin:0; font-size:1.5rem; color:white;">₹ 0.00</h2>
-                </div>
-
-                <div class="form-row" style="margin-top:15px;">
-                    <div class="input-group">
-                        <label>Payment Method</label>
-                        <select id="payMode" onchange="togglePayDetails()">
-                            <option value="Cash">Cash</option>
-                            <option value="UPI">UPI / GPay</option>
-                            <option value="Card">Credit/Debit Card</option>
-                            <option value="Bank">Bank Transfer</option>
-                        </select>
-                    </div>
-                    <div class="input-group" id="refGroup" style="display:none;">
-                        <label id="refLabel">Transaction ID</label>
-                        <input type="text" id="payRef">
-                    </div>
+                    <span>Payable Amount:</span>
+                    <h2 id="liveGrand" style="margin:0; color:white; font-size:1.6rem;">₹ 0</h2>
                 </div>
                 
-                <button class="btn btn-brand" onclick="generateInvoice()">GENERATE PIXEL-PERFECT INVOICE</button>
+                <div class="form-row" style="margin-top:15px;">
+                    <select id="payMode"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option></select>
+                    <input type="text" id="payRef" placeholder="Ref ID / Trans ID">
+                </div>
+
+                <button class="btn btn-brand" onclick="generateInvoice()">GENERATE & DOWNLOAD INVOICE</button>
             </section>
         </div>
     </div>
 
-    <div id="invoice-template">
-        <div class="inv-top-bar">
-            <div class="logo-box"><img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'"></div>
-            <div class="company-center">
-                <h1 id="out-compName" style="font-family:'Orbitron'; font-size:24px; color:black; margin:0;"></h1>
-                <p id="out-compAddr" style="font-size:11px; margin:5px 0;"></p>
-                <p id="out-compContact" style="font-weight:bold; font-size:13px;"></p>
+    <div id="invoice-sheet">
+        <div class="inv-header">
+            <img src="logo.png" class="comp-logo" alt="Logo">
+            <div class="comp-details">
+                <h1 id="out-compName"></h1>
+                <p id="out-compAddr"></p>
+                <p id="out-compContact" style="font-weight:700; font-size:13px;"></p>
             </div>
-            <div class="inv-meta-right">
-                <h2 style="color:black; border:none; padding:0; margin:0; font-size:1.5rem;">INVOICE</h2>
-                <p id="out-invNo" style="font-weight:bold; margin:5px 0;"></p>
-                <p id="out-date" style="font-size:13px;"></p>
+            <div style="text-align:right; width:90px">
+                <h4 style="margin:0; text-decoration: underline;">INVOICE</h4>
             </div>
         </div>
 
-        <div class="inv-info-grid">
-            <div class="bill-to">
-                <div style="background:#000; color:#fff; padding:3px 8px; font-size:10px; width:fit-content; margin-bottom:10px;">BILL TO</div>
-                <p><strong id="out-custName" style="font-size:16px;"></strong></p>
-                <p id="out-custVehicle" style="margin:5px 0; font-size:13px;"></p>
-                <p id="out-custAddr" style="font-size:12px; color:#555; max-width:300px;"></p>
-                <p id="out-custContact" style="font-size:13px;"></p>
-                <p id="out-custGST" style="font-size:12px;"></p>
+        <div class="inv-top-info">
+            <div>
+                <h3>BILL TO</h3>
+                <p><strong id="out-custName"></strong></p>
+                <p id="out-vInfo"></p>
+                <p id="out-custContact"></p>
+                <p id="out-custGST"></p>
             </div>
-            <div class="payment-info" style="text-align: right;">
-                <div style="background:#eee; padding:10px; border-radius:4px;">
-                    <p style="font-size:11px; color:#666; margin-bottom:5px;">PAYMENT DETAILS</p>
-                    <p><strong id="out-payMode"></strong></p>
-                    <p id="out-payRef" style="font-size:11px; color:#444;"></p>
-                </div>
+            <div style="text-align: right;">
+                <p><strong>Invoice No:</strong> <span id="out-invNo"></span></p>
+                <p><strong>Date:</strong> <span id="out-date"></span></p>
+                <p><strong>Payment:</strong> <span id="out-payMode"></span></p>
             </div>
         </div>
 
         <table class="inv-table">
             <thead>
-                <tr>
-                    <th style="width:50px">S.No</th>
-                    <th>Description of Service/Product</th>
-                    <th style="width:100px">Rate</th>
-                    <th style="width:60px">Qty</th>
-                    <th style="width:120px">Total (INR)</th>
-                </tr>
+                <tr><th width="8%">S.No</th><th>Description of Service</th><th width="15%">Rate</th><th width="10%">Qty</th><th width="18%">Amount</th></tr>
             </thead>
             <tbody id="out-items"></tbody>
         </table>
 
-        <div class="inv-bottom-section">
-            <div class="terms" style="font-size:10px; color:#888; width:50%;">
-                <strong>Terms & Conditions:</strong><br>
-                1. Goods once sold will not be taken back.<br>
-                2. No warranty on electrical items.<br>
-                3. Subject to Salem Jurisdiction.
-            </div>
-            <div class="inv-total-calc">
-                <div class="total-line"><span>Subtotal</span><span id="out-sub"></span></div>
-                <div class="total-line"><span>Tax Amount</span><span id="out-tax"></span></div>
-                <div class="total-line"><span>Discount</span><span id="out-disc"></span></div>
-                <div class="total-line" style="font-weight:bold; font-size:18px; border-bottom:2px solid #000; padding-top:10px;">
-                    <span>GRAND TOTAL</span><span id="out-grand"></span>
-                </div>
+        <div class="inv-footer">
+            <div class="total-box">
+                <div class="total-row"><span>Sub-Total</span><span id="out-sub"></span></div>
+                <div class="total-row"><span>Taxable Amount</span><span id="out-tax"></span></div>
+                <div class="total-row"><span>Total Discount</span><span id="out-disc"></span></div>
+                <div class="grand-total-row"><span>GRAND TOTAL</span><span id="out-grand"></span></div>
             </div>
         </div>
 
-        <div class="inv-footer">
-            <div class="signature-box">
-                <div class="sig-space"></div>
-                <p style="font-size:11px; font-weight:bold; margin-top:5px;">Authorized Signature</p>
-                <p style="font-size:9px;">Target Car Care</p>
-            </div>
+        <div class="signature-container">
+            <div class="signature-line">Authority Signature</div>
         </div>
     </div>
-
-    <center><button id="downloadBtn" class="btn btn-add" style="display:none; width:250px; background:#27ae60; margin:20px 0 50px 0;" onclick="downloadJPG()">DOWNLOAD JPEG INVOICE</button></center>
 </div>
 
 <script src="script.js"></script>
