@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Car Care | Billing System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>TARGET CAR CARE</h1>
+    </header>
+
+    <section class="card">
+        <h2>Company Details</h2>
+        <div class="grid">
+            <div class="input-group"><label>Company Name</label><input type="text" id="compName" value="TARGET Multi-brand Car Service"></div>
+            <div class="input-group"><label>Mobile</label><input type="text" id="compMobile" value="8438143591"></div>
+            <div class="input-group"><label>GST/PAN</label><input type="text" id="compGST" placeholder="Optional"></div>
+        </div>
+        <div class="input-group"><label>Address</label><textarea id="compAddr">SRIRAM NAGAR, Veeranam Main Rd, near NEW INDIA DISCOVARY SCHOOL, Balaji Nagar, Puthumariamman Kovil, Ponnammapet, Salem, Tamil Nadu 636003</textarea></div>
+    </section>
+
+    <section class="card">
+        <h2>Customer Details</h2>
+        <div class="grid">
+            <div class="input-group"><label>Customer Name</label><input type="text" id="custName"></div>
+            <div class="input-group"><label>Mobile Number</label><input type="text" id="custMobile"></div>
+            <div class="input-group"><label>Email</label><input type="email" id="custEmail"></div>
+        </div>
+        <div class="grid">
+            <div class="input-group"><label>Address</label><input type="text" id="custAddr"></div>
+            <div class="input-group"><label>GST/PAN</label><input type="text" id="custTax"></div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Service Details</h2>
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Service Description</th>
+                    <th>Rate</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="productBody">
+                <tr>
+                    <td><input type="text" class="p-name" placeholder="E.g. Full Wash"></td>
+                    <td><input type="number" class="p-rate" value="0" oninput="calcRow(this)"></td>
+                    <td><input type="number" class="p-qty" value="1" oninput="calcRow(this)"></td>
+                    <td class="p-total">0.00</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-secondary" onclick="addRow()">+ Add New Row</button>
+        
+        <div class="summary-grid">
+            <div class="input-group"><label>Tax (%)</label><input type="number" id="taxPerc" value="0" oninput="calculateFinal()"></div>
+            <div class="input-group"><label>Discount (%)</label><input type="number" id="discPerc" value="0" oninput="calculateFinal()"></div>
+            <div class="input-group"><label>Extra Charges</label><input type="number" id="extraCharges" value="0" oninput="calculateFinal()"></div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Payment Details</h2>
+        <div class="grid">
+            <div class="input-group">
+                <label>Mode</label>
+                <select id="payMode" onchange="togglePayDetails()">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+            </div>
+            <div class="input-group" id="refGroup" style="display:none;">
+                <label id="refLabel">Transaction ID</label>
+                <input type="text" id="payRef">
+            </div>
+        </div>
+    </section>
+
+    <button class="btn btn-primary btn-large" onclick="generateInvoice()">GENERATE & SAVE INVOICE</button>
+
+    <div id="invoice-template" class="invoice-container">
+        <div class="inv-header">
+            <div class="inv-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+            <div class="inv-company-center">
+                <h2 id="out-compName"></h2>
+                <p id="out-compAddr"></p>
+                <p id="out-compContact"></p>
+            </div>
+            <div class="inv-meta">
+                <h3 style="color:red">TAX INVOICE</h3>
+                <p id="out-invNo"></p>
+                <p id="out-date"></p>
+            </div>
+        </div>
+
+        <div class="inv-billing">
+            <div class="bill-to">
+                <strong>BILL TO:</strong>
+                <p id="out-custName"></p>
+                <p id="out-custAddr"></p>
+                <p id="out-custContact"></p>
+            </div>
+            <div class="bill-status">
+                <strong>PAYMENT:</strong>
+                <p id="out-payMode"></p>
+                <p id="out-payRef"></p>
+            </div>
+        </div>
+
+        <table class="inv-table">
+            <thead>
+                <tr><th>Description</th><th>Rate</th><th>Qty</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="out-items"></tbody>
+        </table>
+
+        <div class="inv-total-section">
+            <div class="total-row"><span>Subtotal:</span> <span id="out-sub">0</span></div>
+            <div class="total-row"><span>Tax:</span> <span id="out-tax">0</span></div>
+            <div class="total-row"><span>Discount:</span> <span id="out-disc">0</span></div>
+            <div class="total-row grand"><span>GRAND TOTAL:</span> <span id="out-grand">0</span></div>
+        </div>
+
+        <div class="inv-footer">
+            <div class="signature">
+                <div class="sig-line"></div>
+                <p>Authorized Signature</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="downloadBtn" class="btn btn-success" style="display:none;" onclick="downloadJPG()">Download JPEG</button>
+    </div>
+
+    <section class="card search-card">
+        <h2>Find Past Invoice</h2>
+        <div class="grid">
+            <input type="text" id="searchVal" placeholder="Enter Invoice No or Mobile">
+            <button class="btn btn-secondary" onclick="findInvoice()">Search Database</button>
+        </div>
+        <div id="searchResult"></div>
+    </section>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
